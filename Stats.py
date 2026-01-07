@@ -54,7 +54,7 @@ class Stats(loader.Module):
         
         # Конфигурация автообновления
         self._update_url = "https://github.com/InsaneError/InsStats/raw/main/Stats.py"
-        self._update_interval = 600  # 10 минут в секундах
+        self._update_interval = 10  # 10 минут в секундах
         self._update_task = None
         self._current_hash = None
 
