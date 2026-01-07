@@ -225,3 +225,4 @@ class Stats(loader.Module):
         """Остановка автообновления при выгрузке модуля"""
         if self._update_task:
             self._update_task.cancel()
+#¼3333
